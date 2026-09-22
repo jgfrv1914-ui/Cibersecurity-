@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Tool state / generated artifacts
+fim_baseline.json
+*.log
+!soc_toolkit/samples/*.log
+!threat_intel/samples/*.log
+
+# Editors and local tooling
+.idea/
+.vscode/
+.DS_Store
+
+# AI agent tooling (not part of the portfolio)
+.claude/
+.agents/
+.codex/
+.opencode/

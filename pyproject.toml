@@ -1,0 +1,38 @@
+[project]
+name = "cybersecurity-portfolio"
+version = "1.0.0"
+description = "Defensive security tooling, offline log triage, and authorized assessment utilities in pure Python."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Fernando Tafurt Pinto" }]
+keywords = ["cybersecurity", "blue-team", "soc", "threat-intelligence", "detection-engineering"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://jgfrv1914-ui.github.io/Cibersecurity-/"
+Repository = "https://github.com/jgfrv1914-ui/Cibersecurity-"
+
+[project.scripts]
+soc-toolkit = "soc_toolkit.cli:main"
+
+[tool.setuptools]
+packages = ["soc_toolkit", "security_auditor", "threat_intel"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "S"]
+ignore = ["S104"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests rely on assert statements.
+"tests/*" = ["S101"]
+# These tools exist to fetch and inspect operator-supplied URLs; that is the feature.
+"blue_team/http_security_header_auditor.py" = ["S310", "S323"]
+"red_team/http_methods_auditor.py" = ["S310"]
+"red_team/robots_sitemap_auditor.py" = ["S310"]
+# A TLS inspector must be able to read a certificate that does not validate.
+"blue_team/tls_certificate_inspector.py" = ["S323"]

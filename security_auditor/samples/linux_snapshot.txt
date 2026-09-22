@@ -1,0 +1,4 @@
+ssh_root_login=no
+ssh_password_auth=no
+firewall=active
+audit_logging=yes

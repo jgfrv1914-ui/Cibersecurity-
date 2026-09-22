@@ -1,0 +1,17 @@
+title: New Administrative User Created
+id: 1f71f8e2-a941-4ad7-8a40-portfolio002
+status: experimental
+description: Flags creation of a user account with administrative privileges.
+logsource:
+  product: linux
+  service: auditd
+detection:
+  selection:
+    message|contains:
+      - "useradd"
+      - "sudo"
+  condition: selection
+level: high
+tags:
+  - attack.persistence
+  - attack.t1136
