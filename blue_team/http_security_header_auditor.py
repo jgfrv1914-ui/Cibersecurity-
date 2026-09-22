@@ -44,7 +44,7 @@ def main() -> int:
             print(f"[PASS] {header}: {headers[header]}")
         else:
             missing += 1
-            print(f"[MISS] {header} — {recommendation}")
+            print(f"[MISS] {header} -> {recommendation}")
     for leaked in ("server", "x-powered-by", "x-aspnet-version"):
         if leaked in headers:
             print(f"[INFO] Technology disclosure: {leaked}: {headers[leaked]}")

@@ -36,6 +36,38 @@ class PasswordStrengthTests(unittest.TestCase):
         self.assertNotIn("password", report)
 
 
+class PasswordCommonalityTests(unittest.TestCase):
+    """Regression: a decorated common password must not score as strong."""
+
+    def setUp(self):
+        self.module = load("blue_team/password_strength_analyzer.py")
+
+    def test_decorated_common_passwords_are_flagged(self):
+        for candidate in ("password123", "P@ssw0rd", "Admin!2024", "qwerty123456789"):
+            with self.subTest(candidate=candidate):
+                report = self.module.analyze(candidate)
+                self.assertFalse(report["checks"]["not_common"])
+                self.assertLessEqual(report["score"], 20)
+
+    def test_unrelated_passphrase_still_scores_well(self):
+        report = self.module.analyze("Correct-Horse-Battery-Staple-2040")
+        self.assertTrue(report["checks"]["not_common"])
+        self.assertGreaterEqual(report["score"], 80)
+
+
+class FailedLoginDetectorTests(unittest.TestCase):
+    """Regression: spraying many usernames from one host must still alert."""
+
+    def test_regex_matches_both_sshd_variants(self):
+        module = load("blue_team/failed_login_detector.py")
+        line = "Failed password for invalid user admin from 203.0.113.45 port 1 ssh2"
+        self.assertEqual(module.FAILED.search(line)["ip"], "203.0.113.45")
+        line = "Failed password for bob from 198.51.100.24 port 9 ssh2"
+        match = module.FAILED.search(line)
+        self.assertEqual(match["user"], "bob")
+        self.assertEqual(match["ip"], "198.51.100.24")
+
+
 class EntropyScannerTests(unittest.TestCase):
     def test_entropy_extremes(self):
         module = load("blue_team/file_entropy_scanner.py")

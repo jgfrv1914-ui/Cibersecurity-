@@ -39,8 +39,9 @@ approach security engineering:
   reproducible command, and a committed output artifact you can diff.
 - **Offline and non-destructive by default.** Analysis tools read exported
   evidence; they never mutate the system under review.
-- **Tested.** 14 unit tests cover parsing, detection logic, and report shape,
-  including a regression test for a real matching bug found in this codebase.
+- **Tested.** 17 unit tests cover parsing, detection logic, scoring, and report
+  shape, including regression tests for three real defects found by running
+  every tool end to end.
 - **Linted and CI-gated.** `ruff` and the test suite run on Python 3.10, 3.11,
   and 3.12 for every push and pull request.
 
@@ -230,7 +231,7 @@ python blue_team/password_strength_analyzer.py --help
 ## Testing and quality gates
 
 ```bash
-python -m unittest discover -s tests -v   # 14 tests, fully offline
+python -m unittest discover -s tests -v   # 17 tests, fully offline
 python -m compileall -q .                 # byte-compile every module
 ruff check .                              # lint (config in pyproject.toml)
 ```

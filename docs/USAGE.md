@@ -79,6 +79,11 @@ Indicators are classified as `ipv4`, `domain`, `url`, or `hash`.
 Scores password quality and estimated entropy. The password is never echoed and
 never appears in the report.
 
+The reported entropy is an **upper bound**: it assumes every character was chosen
+at random. A dictionary word with a suffix (`password123`) therefore gets a high
+nominal entropy but is capped to a score of 20, because leetspeak and trailing
+digits are the first mutations a cracking tool applies.
+
 ```bash
 python blue_team/password_strength_analyzer.py            # prompts securely
 python blue_team/password_strength_analyzer.py --password "..."   # avoid on shared hosts
@@ -168,8 +173,18 @@ Top source addresses:
 ### `failed_login_detector.py`
 
 ```bash
-python blue_team/failed_login_detector.py <log> [--threshold 5]
+python blue_team/failed_login_detector.py <log> [--threshold 5] [--per-user]
 ```
+
+| Argument | Default | Description |
+|---|---|---|
+| `log` | required | Authentication log export |
+| `--threshold` | `5` | Failures before an alert is raised |
+| `--per-user` | off | Count per source/username pair instead of per source address |
+
+By default failures are counted **per source address**, because an attacker
+spraying many usernames from one host produces a low count for each individual
+pair. `--per-user` narrows the view when you are investigating one account.
 
 ### `ioc_matcher.py`
 
@@ -225,6 +240,10 @@ python red_team/service_banner_grabber.py <host> [ports...] [--timeout 3.0]
 
 Defaults to ports 22, 25, 80, and 443.
 
+Reachability and banner retrieval are reported separately. A service that accepts
+the connection but sends nothing is reported as `OPEN (open, no banner returned)`,
+not as closed — many services stay silent until spoken to first.
+
 ### `tcp_service_probe.py`
 
 ```bash
@@ -255,8 +274,13 @@ Resolution only: no zone transfers, no brute-force against the target service.
 python red_team/http_methods_auditor.py <url>
 ```
 
-Issues one `OPTIONS` request and flags advertised `PUT`, `DELETE`, `TRACE`, and
-`CONNECT`. Exits `1` when risky methods are advertised.
+Issues one `OPTIONS` request and flags advertised `PUT`, `DELETE`, `TRACE`,
+`CONNECT`, and `PATCH`. Exits `1` when risky methods are advertised.
+
+A `405` or `501` response is a valid answer, not a tool failure: the server is
+saying it does not implement `OPTIONS`. The tool reports the status and any
+`Allow` header it still returned. Exit `2` is reserved for a genuinely
+unreachable host.
 
 ### `robots_sitemap_auditor.py`
 

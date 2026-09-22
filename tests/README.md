@@ -12,14 +12,20 @@ python -m unittest discover -s tests -v
 | [`test_soc_toolkit.py`](test_soc_toolkit.py) | Log parsing, brute-force thresholds, IOC correlation, report shape |
 | [`test_security_auditor.py`](test_security_auditor.py) | Hardening checks on weak and hardened snapshots |
 | [`test_threat_intel.py`](test_threat_intel.py) | Indicator normalization, classification, and matching |
-| [`test_cli_tools.py`](test_cli_tools.py) | Standalone tools: port range parsing, password reporting, entropy, log classification |
+| [`test_cli_tools.py`](test_cli_tools.py) | Standalone tools: port parsing, password scoring and commonality, entropy, log classification, sshd log formats |
 
-## Notable regression test
+## Notable regression tests
 
-`test_indicator_does_not_match_a_longer_address` pins a real bug found in this
-codebase: IOC correlation originally used a substring check, so the indicator
-`10.0.0.1` alerted on `10.0.0.11` and `210.0.0.1`. Matching is now
-delimiter-aware and the test fails if that regresses.
+Each of these pins a real defect found in this codebase, three of them by
+running every tool end to end rather than by reading the code:
+
+- `test_indicator_does_not_match_a_longer_address` — IOC correlation used a
+  substring check, so `10.0.0.1` alerted on `10.0.0.11` and `210.0.0.1`.
+- `test_decorated_common_passwords_are_flagged` — the commonality check compared
+  for exact equality against seven words, so `password123` scored 74/100.
+- `test_regex_matches_both_sshd_variants` — the failed-login regex handled only
+  the `invalid user` form, and counting was grouped per source/username pair,
+  which missed password spraying entirely.
 
 ## Loading standalone scripts
 
