@@ -110,7 +110,9 @@ const storedLanguage = localStorage.getItem('portfolio-language');
 const browserLanguage = (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
 setLanguage(storedLanguage && languageContent[storedLanguage] ? storedLanguage : browserLanguage);
 
-if (shell && !reduceMotion) {
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+if (shell && !reduceMotion && finePointer) {
   shell.addEventListener('pointermove', (event) => {
     const rect = shell.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
