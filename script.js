@@ -1,5 +1,4 @@
 ﻿const shell = document.querySelector('.experience-shell');
-const panels = document.querySelectorAll('.glass-panel');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const languageButtons = document.querySelectorAll('.language-button');
 
@@ -119,20 +118,10 @@ if (shell && !reduceMotion && finePointer) {
     const y = ((event.clientY - rect.top) / rect.height) * 100;
     shell.style.setProperty('--pointer-x', `${x}%`);
     shell.style.setProperty('--pointer-y', `${y}%`);
-
-    panels.forEach((panel) => {
-      const panelRect = panel.getBoundingClientRect();
-      const px = ((event.clientX - panelRect.left) / panelRect.width - 0.5) * 12;
-      const py = ((event.clientY - panelRect.top) / panelRect.height - 0.5) * -12;
-      panel.style.transform = `perspective(900px) rotateX(${py}deg) rotateY(${px}deg) translateY(-2px)`;
-    });
   });
 
   shell.addEventListener('pointerleave', () => {
     shell.style.setProperty('--pointer-x', '50%');
     shell.style.setProperty('--pointer-y', '50%');
-    panels.forEach((panel) => {
-      panel.style.transform = 'none';
-    });
   });
 }
